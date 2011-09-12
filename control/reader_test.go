@@ -118,3 +118,16 @@ func TestReadRealControlFile(t *testing.T) {
 		t.Fatalf("TestReadrealControlFile failed: %v", err)
 	}
 }
+
+// Test the KeyValueMap function
+func TestKeyValueMap(t *testing.T) {
+	kvp, err := Parse(bytes.NewBufferString("Key: Value"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	kvm := KeyValueMap(kvp)
+	if kvm["Key"] != "Value" {
+		t.Fatal("map is broken")
+	}
+}

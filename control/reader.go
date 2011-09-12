@@ -19,6 +19,19 @@ type KeyValuePair struct {
 	Value string
 }
 
+// KeyValueMap converts an slice of KeyValuePairs into a map
+// for easier random access.
+//
+// A KeyValuePair slice is explicitly ordered, where as a map
+// is unordered.
+func KeyValueMap(kvp []KeyValuePair) (kvm map[string]string) {
+	kvm = make(map[string]string)
+	for _, entry := range kvp {
+		kvm[entry.Key] = entry.Value	
+	}
+	return
+}
+
 func isKeySeparator(buf []byte) bool {
 	if len(buf) >= 2 {
 		return string(buf[0:2]) == ": "
