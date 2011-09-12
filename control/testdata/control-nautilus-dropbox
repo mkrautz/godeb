@@ -1,0 +1,14 @@
+Package: nautilus-dropbox
+Version: 0.6.9
+Architecture: amd64
+Maintainer: Rian Hunter <rian@dropbox.com>
+Installed-Size: 460
+Depends: libatk1.0-0 (>= 1.20.0), libc6 (>= 2.4), libcairo2 (>= 1.6.0), libglib2.0-0 (>= 2.16.0), libgtk2.0-0 (>= 2.12.0), libnautilus-extension1 (>= 1:2.22.2), libpango1.0-0 (>= 1.20.1), python (>= 2.5), python-gtk2 (>= 2.12)
+Suggests: nautilus (>= 2.16.0)
+Section: gnome
+Priority: optional
+Description: Dropbox integration for Nautilus
+ Nautilus Dropbox is an extension that integrates
+ the Dropbox web service with your GNOME Desktop.
+ .
+ Check us out at http://www.dropbox.com/
