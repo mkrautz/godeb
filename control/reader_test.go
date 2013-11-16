@@ -21,35 +21,34 @@ var readerTests []readerTestCase = []readerTestCase{
 	{
 		"single line",
 
-`A: 0
+		`A: 0
 B: 1
 C: 2`,
 
-		[]KeyValuePair{ { "A", "0" }, { "B", "1" }, { "C", "2" }, },
+		[]KeyValuePair{{"A", "0"}, {"B", "1"}, {"C", "2"}},
 	},
 	{
 		"multi-line",
-	
-`Test: This text
+
+		`Test: This text
  spans multiple lines`,
 
- 		[]KeyValuePair{ { "Test", `This text
-spans multiple lines` }, },
+		[]KeyValuePair{{"Test", `This text
+spans multiple lines`}},
 	},
 	{
 		"trimming",
 		`A: are we getting trimmed?      `,
-		[]KeyValuePair{ { "A", "are we getting trimmed?" }, },
+		[]KeyValuePair{{"A", "are we getting trimmed?"}},
 	},
 	{
 		"trimming-comment",
 		"A: are we getting trimmed? # why yes, yes of course!",
-		[]KeyValuePair{ { "A", "are we getting trimmed?" }, },
+		[]KeyValuePair{{"A", "are we getting trimmed?"}},
 	},
 }
 
-
-func cmpKeyValuePair(a []KeyValuePair, b []KeyValuePair) (bool, os.Error) {
+func cmpKeyValuePair(a []KeyValuePair, b []KeyValuePair) (bool, error) {
 	if len(a) != len(b) {
 		return false, fmt.Errorf("length mismatch (a=%v, b=%v)", len(a), len(b))
 	}
@@ -66,7 +65,7 @@ func cmpKeyValuePair(a []KeyValuePair, b []KeyValuePair) (bool, os.Error) {
 
 func TestEverything(t *testing.T) {
 	for _, testCase := range readerTests {
-		kvp, err := Parse(bytes.NewBufferString(testCase.Input))	
+		kvp, err := Parse(bytes.NewBufferString(testCase.Input))
 		if err != nil {
 			t.Fatal("%v failed: %v", testCase.Name, err)
 		}
@@ -103,7 +102,7 @@ Check us out at http://www.dropbox.com/`},
 
 // Test that we can read a real control file (nautilus-dropbox)
 func TestReadRealControlFile(t *testing.T) {
-	f, err := os.Open("testdata/control-nautilus-dropbox")	
+	f, err := os.Open("testdata/control-nautilus-dropbox")
 	if err != nil {
 		t.Fatal(err)
 	}

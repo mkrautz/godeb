@@ -7,8 +7,8 @@ package control
 
 import (
 	"bufio"
+	"errors"
 	"io"
-	"os"
 	"strings"
 )
 
@@ -27,7 +27,7 @@ type KeyValuePair struct {
 func KeyValueMap(kvp []KeyValuePair) (kvm map[string]string) {
 	kvm = make(map[string]string)
 	for _, entry := range kvp {
-		kvm[entry.Key] = entry.Value	
+		kvm[entry.Key] = entry.Value
 	}
 	return
 }
@@ -35,11 +35,11 @@ func KeyValueMap(kvp []KeyValuePair) (kvm map[string]string) {
 func isKeySeparator(buf []byte) bool {
 	if len(buf) >= 2 {
 		return string(buf[0:2]) == ": "
-	}		
+	}
 	return false
 }
 
-// Parse parses a file in the style of Debian control files. 
+// Parse parses a file in the style of Debian control files.
 //
 // A Debian control file consists of key-value pairs separated by
 // colons, e.g.:
@@ -50,18 +50,15 @@ func isKeySeparator(buf []byte) bool {
 // A value can span multiple lines of subsequent lines if it begin
 // with a space, like so:
 //
-// Description: Hello 
+// Description: Hello
 //  world
 //
 // The example above would yield the value "Hello\nworld"
 //
 // The Parse function automatically discards whitespace at the beginning and
 // end of any parsed values.
-func Parse(r io.Reader) (kvps []KeyValuePair, err os.Error) {
-	buf, err := bufio.NewReaderSize(r, 4096)
-	if err != nil {
-		return nil, err
-	}
+func Parse(r io.Reader) (kvps []KeyValuePair, err error) {
+	buf := bufio.NewReaderSize(r, 4096)
 
 Line:
 	for {
@@ -69,9 +66,9 @@ Line:
 
 		line, isPrefix, err := buf.ReadLine()
 		if isPrefix {
-			return nil, os.NewError("line exceeds internal buffer limit")	
+			return nil, errors.New("line exceeds internal buffer limit")
 		}
-		if err == os.EOF {
+		if err == io.EOF {
 			return kvps, nil
 		} else if err != nil {
 			return nil, err
@@ -83,8 +80,8 @@ Line:
 				if idx == 0 {
 					continue Line
 				}
-				return nil, os.NewError("debcontrol: malformed input file: comment '#' in key section")
-			}		
+				return nil, errors.New("debcontrol: malformed input file: comment '#' in key section")
+			}
 			if isKeySeparator(line[idx:]) {
 				key = line[0:idx]
 				line = line[idx+2:]
@@ -99,7 +96,7 @@ Line:
 				if rune == '#' {
 					line = line[0:idx]
 					break
-				}	
+				}
 			}
 			value = append(value, line...)
 
@@ -111,9 +108,9 @@ Line:
 			if lookahead[0] == ' ' {
 				line, isPrefix, err = buf.ReadLine()
 				if isPrefix {
-					return nil, os.NewError("debcontrol: line exceeds internal buffer limit")	
+					return nil, errors.New("debcontrol: line exceeds internal buffer limit")
 				}
-				if err == os.EOF {
+				if err == io.EOF {
 					return kvps, nil
 				} else if err != nil {
 					return nil, err
